@@ -1,3 +1,93 @@
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ 
+    canvas: document.getElementById('canvas3d'),
+    alpha: true,
+    antialias: true
+});
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+
+// Particles
+const particlesGeometry = new THREE.BufferGeometry();
+const particlesCount = 3000;
+const posArray = new Float32Array(particlesCount * 3);
+
+for(let i = 0; i < particlesCount * 3; i++) {
+    posArray[i] = (Math.random() - 0.5) * 100;
+}
+
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+const particlesMaterial = new THREE.PointsMaterial({
+    size: 0.08,
+    color: 0x64ffda,
+    transparent: true,
+    opacity: 0.6,
+    blending: THREE.AdditiveBlending
+});
+
+const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particlesMesh);
+
+// Geometric grid
+const gridSize = 50;
+const gridDivisions = 50;
+const gridHelper = new THREE.GridHelper(gridSize, gridDivisions, 0x64ffda, 0x172a45);
+gridHelper.rotation.x = Math.PI / 2;
+gridHelper.position.z = -20;
+gridHelper.material.opacity = 0.15;
+gridHelper.material.transparent = true;
+scene.add(gridHelper);
+
+// Wireframe shapes
+const torusGeometry = new THREE.TorusGeometry(8, 2, 16, 100);
+const wireframeMaterial = new THREE.MeshBasicMaterial({ 
+    color: 0x64ffda,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.15
+});
+const torus = new THREE.Mesh(torusGeometry, wireframeMaterial);
+torus.position.set(15, 5, -10);
+scene.add(torus);
+
+const boxGeometry = new THREE.BoxGeometry(6, 6, 6);
+const box = new THREE.Mesh(boxGeometry, wireframeMaterial);
+box.position.set(-15, -5, -15);
+scene.add(box);
+
+camera.position.z = 30;
+
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+});
+
+function animate() {
+    requestAnimationFrame(animate);
+    
+    torus.rotation.x += 0.003;
+    torus.rotation.y += 0.005;
+    
+    box.rotation.x += 0.004;
+    box.rotation.y += 0.004;
+    
+    particlesMesh.rotation.y += 0.0005;
+    
+    camera.position.x += (mouseX * 3 - camera.position.x) * 0.03;
+    camera.position.y += (mouseY * 3 - camera.position.y) * 0.03;
+    camera.lookAt(scene.position);
+    
+    renderer.render(scene, camera);
+}
+
+animate();
+
 // ==========================================
 // Navigation
 // ==========================================
