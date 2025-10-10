@@ -1,0 +1,206 @@
+/* ================================
+   Variables
+================================ */
+:root {
+    --primary-color: #0a192f;
+    --secondary-color: #172a45;
+    --accent-color: #64ffda;
+    --text-color: #ccd6f6;
+    --text-color-secondary: #ffffff;
+}
+
+/* ================================
+   Reset & Base
+================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--primary-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* ================================
+   Canvas 3D
+================================ */
+#canvas3d {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* ================================
+   Layout
+================================ */
+.content {
+    position: relative;
+    z-index: 2;
+}
+
+/* ================================
+   Navigation
+================================ */
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 25px 50px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: rgba(10,25,47,0.85);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+
+    border-bottom: 1px solid rgba(100,255,218,0.1);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent-color);
+    font-family: 'Courier New', monospace;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+}
+
+/* Mobile nav toggle */
+.nav-toggle{
+    display:none;
+    background:transparent;
+    border:0;
+    cursor:pointer
+}
+
+.hamburger{
+    display:block;
+    width:26px;
+    height:2px;
+    background:var(--text-color);
+    position:relative
+}
+
+.hamburger::before,.hamburger::after{
+    content:'';
+    position:absolute;
+    left:0;width:26px;
+    height:2px;
+    background:var(--text-color);
+    transition:transform .25s,opacity .25s
+}
+
+.hamburger::before{
+    top:-8px
+}
+
+.hamburger::after{
+    top:8px
+}
+
+/* Mobile menu (hidden by default) */
+.nav-links.mobile-open{
+    position:fixed;
+    top:70px;
+    right:16px;
+    background:rgba(10,25,47,0.95);
+    backdrop-filter:blur(6px);
+    flex-direction:column;
+    gap:12px;
+    padding:16px;
+    border-radius:10px;
+    box-shadow:0 10px 30px rgba(2,6,23,0.6);
+    z-index:200
+    }
+
+/* Hamburger open state -> cross */
+.nav-toggle.open .hamburger{
+    background:transparent
+}
+
+.nav-toggle.open .hamburger::before{
+    transform:translateY(8px) rotate(45deg)
+}
+
+.nav-toggle.open .hamburger::after{
+    transform:translateY(-8px) rotate(-45deg)
+}
+
+/* ensure mobile nav links have readable link styles */
+.nav-links.mobile-open a{
+    color:var(--text-color);
+    padding:8px 6px;
+    border-radius:6px
+}
+
+.nav-links.mobile-open a:hover{color:var(--accent-color);
+    background:rgba(100,255,218,0.03)
+}
+
+.nav-links a {
+    position: relative;
+    font-size: 14px;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color .25s;
+}
+
+.nav-links a:hover {
+    color: var(--accent-color);
+}
+
+.nav-links a::before,
+.nav-links a::after {
+    color: var(--accent-color);
+    opacity: 0;
+    transition: opacity .25s;
+}
+
+.nav-links a::before {
+    content: '< ';
+}
+
+.nav-links a::after {
+    content: ' />';
+}
+
+.nav-links a:hover::before,
+.nav-links a:hover::after {
+    opacity: 1;
+}
+
+
+/* ================================
+   Responsive
+================================ */
+
+@media (max-width:768px) {
+    nav {
+    .nav-toggle{display:block}
+    .nav-links{display:none}
+    .nav-links.mobile-open{display:flex}
+        padding: 18px;
+    }
+
+    .nav-links {
+        gap: 12px;
+    }
+}
