@@ -105,43 +105,129 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ==========================================
-// Navigation
+// Navigation & Scroll Effects
 // ==========================================
 
 // Active navigation on scroll
 function updateActiveNav() {
     const sections = document.querySelectorAll('section');
-    const navLinks = document.querySelectorAll('.nav-links a');
-
+    const navItems = document.querySelectorAll('.nav-item');
+    
     let current = '';
-
+    
     sections.forEach(section => {
-        const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-        if (window.scrollY >= sectionTop - 200) {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        
+        if (window.pageYOffset >= sectionTop - 200) {
             current = section.getAttribute('id');
         }
     });
-
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-            link.classList.add('active');
+    
+    navItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('data-section') === current) {
+            item.classList.add('active');
         }
     });
 }
 
-// Trigger update on scroll
-window.addEventListener('scroll', updateActiveNav);
-
-// Smooth scroll for anchor links
+// Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
+        
         if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
     });
+});
+
+// Fade-in animation on scroll
+function revealOnScroll() {
+    const elements = document.querySelectorAll('.fade-in');
+    
+    elements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const elementVisible = 150;
+        
+        if (elementTop < window.innerHeight - elementVisible) {
+            element.classList.add('visible');
+        }
+    });
+}
+
+// ==========================================
+// Event Listeners
+// ==========================================
+
+window.addEventListener('scroll', () => {
+    updateActiveNav();
+    revealOnScroll();
+});
+
+// ==========================================
+// Initialize
+// ==========================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    initThree();
+    revealOnScroll();
+    updateActiveNav();
+
+    // Typing effect (looping through phrases)
+    const typingEl = document.querySelector('.typing-text');
+    const cursorEl = document.querySelector('.typing-cursor');
+    if (typingEl) {
+        const raw = typingEl.getAttribute('data-phrases') || '';
+        const phrases = raw.split(',').map(s => s.trim()).filter(Boolean);
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let deleting = false;
+
+        const typeSpeed = 80; // ms per char
+        const deleteSpeed = 40; // ms per char when deleting
+        const pauseAfter = 1200; // ms pause after full phrase
+
+        function tick() {
+            const current = phrases[phraseIndex] || typingEl.textContent || '';
+
+            if (!deleting) {
+                typingEl.textContent = current.substring(0, charIndex + 1);
+                charIndex++;
+
+                if (charIndex === current.length) {
+                    // end of word
+                    deleting = true;
+                    setTimeout(tick, pauseAfter);
+                    return;
+                }
+                setTimeout(tick, typeSpeed);
+            } else {
+                typingEl.textContent = current.substring(0, charIndex - 1);
+                charIndex--;
+
+                if (charIndex === 0) {
+                    deleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    setTimeout(tick, 400);
+                    return;
+                }
+                setTimeout(tick, deleteSpeed);
+            }
+        }
+
+        // start after a short delay
+        setTimeout(() => {
+            // Ensure cursor is visible
+            if (cursorEl) cursorEl.style.opacity = '1';
+            tick();
+        }, 400);
+    }
 });
 
 // Mobile navigation toggle
@@ -162,53 +248,22 @@ if (navToggle && navLinks) {
             navToggle.setAttribute('aria-expanded', 'false');
         });
     });
-}
 
-// Init on load
-document.addEventListener('DOMContentLoaded', updateActiveNav);
-
-// Init typing effect for .typing-text
-function initTyping() {
-    const el = document.querySelector('.typing-text');
-    if (!el) return;
-
-    const phrases = (el.dataset.phrases || '')
-        .split(',')
-        .map(p => p.trim())
-        .filter(Boolean);
-
-    if (phrases.length === 0) return;
-
-    let phraseIndex = 0;
-    let charIndex = 0;
-    let deleting = false;
-
-    function tick() {
-        const current = phrases[phraseIndex];
-        if (!deleting) {
-            charIndex++;
-            el.textContent = current.slice(0, charIndex);
-            if (charIndex === current.length) {
-                deleting = true;
-                setTimeout(tick, 1400); // pause on full phrase
-                return;
-            }
-        } else {
-            charIndex--;
-            el.textContent = current.slice(0, charIndex);
-            if (charIndex === 0) {
-                deleting = false;
-                phraseIndex = (phraseIndex + 1) % phrases.length;
-            }
+    // Close on resize (e.g., rotate iPhone)
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            navToggle.classList.remove('open');
+            navLinks.classList.remove('mobile-open');
+            navToggle.setAttribute('aria-expanded', 'false');
         }
-        setTimeout(tick, deleting ? 50 : 100);
-    }
+    });
 
-    tick();
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            navToggle.classList.remove('open');
+            navLinks.classList.remove('mobile-open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
 }
-
-// Init on load: keep l'appel à updateActiveNav et ajoute initTyping
-document.addEventListener('DOMContentLoaded', () => {
-    updateActiveNav();
-    initTyping();
-});
