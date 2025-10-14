@@ -88,6 +88,12 @@ function animate() {
 
 animate();
 
+// Backwards-compatible init function (noop)
+function initThree() {
+    // La scène Three.js est déjà initialisée au top-level de ce fichier.
+    // Cette fonction préserve la compatibilité pour d'éventuels appels externes.
+}
+
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -267,3 +273,18 @@ if (navToggle && navLinks) {
         }
     });
 }
+
+// ==========================================
+// Additional Interactions
+// ==========================================
+
+// Project cards hover effect
+document.querySelectorAll('.project-item').forEach(item => {
+    item.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px) scale(1.02)';
+    });
+    
+    item.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+});
