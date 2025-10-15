@@ -810,6 +810,14 @@ footer {
         font-size: 2rem;
     }
 
+    /* Placement des skills box */
+    .skills-grid .skill-category:nth-child(1) { grid-column: 1; grid-row: 1; }
+    .skills-grid .skill-category:nth-child(2) { grid-column: 1; grid-row: 2; }
+    .skills-grid .skill-category:nth-child(3) { grid-column: 1; grid-row: 3; }
+    .skills-grid .skill-category:nth-child(4) { grid-column: 1; grid-row: 4; }
+    .skills-grid .skill-category:nth-child(5) { grid-column: 1; grid-row: 5; }
+    .skills-grid .skill-category:last-of-type { grid-column: 1; grid-row: 6; }
+
     .skills-list {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     }
@@ -817,6 +825,9 @@ footer {
     .soft-skills {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
+
+    /* Force one skill-category per row on small screens */
+    .skills-grid { grid-template-columns: 1fr !important; }
 
     .skill-category {
         padding: 20px;
