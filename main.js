@@ -272,6 +272,31 @@ if (navToggle && navLinks) {
             navToggle.setAttribute('aria-expanded', 'false');
         }
     });
+
+    // fermer en cliquant / tapant à l'extérieur
+    function closeMobileNav() {
+        navToggle.classList.remove('open');
+        navLinks.classList.remove('mobile-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    // click outside
+    document.addEventListener('click', (e) => {
+        if (!navLinks.classList.contains('mobile-open')) return;
+        const target = e.target;
+        if (!navLinks.contains(target) && !navToggle.contains(target)) {
+            closeMobileNav();
+        }
+    });
+
+    // touchstart pour meilleure réactivité sur mobile
+    document.addEventListener('touchstart', (e) => {
+        if (!navLinks.classList.contains('mobile-open')) return;
+        const target = e.target;
+        if (!navLinks.contains(target) && !navToggle.contains(target)) {
+            closeMobileNav();
+        }
+    });
 }
 
 // ==========================================
