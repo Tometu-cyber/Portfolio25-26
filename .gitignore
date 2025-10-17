@@ -3,3 +3,6 @@
 
 # macOS
 .DS_Store
+
+# Zone de test
+.test/

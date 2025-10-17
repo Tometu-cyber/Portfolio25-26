@@ -3,6 +3,7 @@
 ================================ */
 :root {
     --primary-color: #0a192f;
+    --primary-color-transparent: rgba(10, 25, 47, 0.7);
     --secondary-color: #172a45;
     --secondary-color-transparent: #172a45c1;
     --accent-color: #64ffda;
@@ -733,6 +734,104 @@ footer {
 }
 
 /* ================================
+   TimeLine
+================================ */
+#timeline {
+	box-sizing: border-box;
+}
+.right {
+    float: right;
+}
+/* ====== MIXINS ===== */
+ .poster__heading, .poster__subheading {
+	text-align: center;
+}
+ .poster__heading {
+	margin: 0 auto;
+}
+ #timeline {
+	font-size: 100%;
+}
+.timeline-wrapper {
+    position: relative;
+    padding: 2em;
+    border: 1px solid rgba(100,255,218,0.08);
+    border-radius: 12px;
+    /* background: linear-gradient(var(--secondary-color-transparent), var(--secondary-color-transparent) 80%); */
+    background: linear-gradient(var(--primary-color-transparent), var(--secondary-color-transparent) 40%, var(--secondary-color-transparent) 70%, var(--primary-color-transparent));
+}
+.timeline-wrapper:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(100,255,218,0.06);
+    border-color: var(--accent-color);
+}
+.timeline-wrapper:after {
+    content: '';
+    display: block;
+    height: 500px;
+    width: 100%;
+    background-size: cover;
+    position: absolute;
+    background-position: 25% center;
+    z-index: -10;
+    bottom: 0;
+}
+.svg-timeline {
+    position: absolute;
+    margin-left: 47%;
+    transform: translateX(-50%);
+    display: none;
+}
+.timeline {
+    transition: all 250ms ease;
+    width: 90%;
+    margin: 0 auto;
+}
+.timeline__item {
+    margin-bottom: 4em;
+    clear: both;
+}
+.timeline__day {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: white;
+    text-transform: uppercase;
+    padding-bottom: 0.75em;
+}
+.timeline__day span {
+    font-weight: 300;
+    color: var(--accent-color);
+    text-transform: none;
+}
+.timeline__day-sum {
+    color: white;
+    font-weight: 300;
+    font-size: 0.8em;
+    display: block;
+    margin-bottom: 1.5em;
+    line-height: 1.5;
+}
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+.clearfix {
+    display: inline-block;
+}
+
+* #timeline .clearfix {
+    height: 1%;
+}
+.clearfix {
+    display: block;
+}
+
+
+/* ================================
    Animations
 ================================ */
 .fade-in {
@@ -767,6 +866,44 @@ footer {
 
     .main-content {
         margin-left: 0;
+    }
+}
+
+@media screen and (min-width: 31.25em) {
+	#timeline {
+		font-size: 105%;
+	}
+}
+@media screen and (min-width: 50em) {
+	#timeline {
+        font-size: 115%;
+	}
+}
+@media screen and (min-width: 75em) {
+	#timeline {
+		font-size: 125%;
+	}
+}
+@media screen and (min-width: 50em) {
+    .svg-timeline {
+        display: block;
+    }
+}
+
+@media screen and (min-width: 31.25em) {
+    .timeline {
+        width: 80%;
+    }
+}
+@media screen and (min-width: 50em) {
+    .timeline {
+        width: 95%;
+    }
+}
+
+@media screen and (min-width: 50em) {
+    .timeline__item {
+        width: 42%;
     }
 }
 

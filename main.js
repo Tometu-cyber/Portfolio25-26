@@ -313,3 +313,103 @@ document.querySelectorAll('.project-item').forEach(item => {
         this.style.transform = 'translateY(0) scale(1)';
     });
 });
+
+// ==========================================
+// TimeLine
+// ==========================================
+
+// Controller ScrollMagic (if available)
+let controller = null;
+if (typeof ScrollMagic !== 'undefined') {
+    controller = new ScrollMagic.Controller();
+}
+
+// Prépare le tracé du trait — recherche d'abord un <line> dans un <svg>
+let line = document.querySelector('svg #timeline') || document.querySelector('line#timeline') || document.querySelector('#timeline');
+let length = 0;
+
+if (line) {
+    // Si l'élément expose getTotalLength, on l'utilise
+    if (typeof line.getTotalLength === 'function') {
+        length = line.getTotalLength();
+    } else if (line.tagName && line.tagName.toLowerCase() === 'line') {
+        // fallback: calculer la longueur à partir des attributs x1,y1,x2,y2
+        const x1 = parseFloat(line.getAttribute('x1')) || 0;
+        const y1 = parseFloat(line.getAttribute('y1')) || 0;
+        const x2 = parseFloat(line.getAttribute('x2')) || 0;
+        const y2 = parseFloat(line.getAttribute('y2')) || 0;
+        length = Math.hypot(x2 - x1, y2 - y1);
+    } else {
+        // autre élément non-SVG ou méthode manquante — choisir une valeur par défaut
+        length = 2000;
+    }
+
+    // Si GSAP est présent, on l'utilise; sinon on applique un style direct
+    if (typeof gsap !== 'undefined') {
+        try {
+            gsap.set(line, {
+                strokeDasharray: length,
+                strokeDashoffset: length,
+                visibility: 'visible'
+            });
+        } catch (e) {
+            // ignore
+            line.style.visibility = 'visible';
+        }
+    } else {
+        // fallback CSS setup
+        try {
+            line.style.strokeDasharray = length;
+            line.style.strokeDashoffset = length;
+            line.style.visibility = 'visible';
+        } catch (e) {
+            // nothing
+        }
+    }
+}
+
+// Fonction d’animation (utilise GSAP/ScrollMagic si disponibles, sinon noop)
+function animateTimeline(trigger, fromPercent, toPercent) {
+    if (!line) return;
+
+    if (typeof gsap !== 'undefined' && typeof ScrollMagic !== 'undefined' && controller) {
+        const tween = gsap.fromTo(
+            line,
+            { strokeDashoffset: length * (1 - fromPercent / 100) },
+            { strokeDashoffset: length * (1 - toPercent / 100), duration: 1 }
+        );
+
+        new ScrollMagic.Scene({
+            triggerElement: trigger,
+            triggerHook: 0.8
+        })
+        .setTween(tween)
+        .addTo(controller);
+    } else {
+        // fallback minimal: when trigger enters viewport, set dashoffset instantly
+        const el = document.querySelector(trigger);
+        if (!el) return;
+        const onScroll = () => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 0.85) {
+                const targetOffset = length * (1 - toPercent / 100);
+                if (line.style) {
+                    line.style.transition = 'stroke-dashoffset 0.6s linear';
+                    line.style.strokeDashoffset = targetOffset;
+                }
+                window.removeEventListener('scroll', onScroll);
+            }
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        // check now in case already visible
+        onScroll();
+    }
+}
+
+// Scènes (ou fallback listeners)
+animateTimeline('#timeline', 0, 10);
+animateTimeline('.dayTwo', 10, 20);
+animateTimeline('.dayThree', 20, 40);
+animateTimeline('.dayFour', 40, 65);
+animateTimeline('.dayFive', 65, 85);
+animateTimeline('.daySix', 85, 100);
